@@ -1,15 +1,27 @@
+import { RichUtils } from 'draft-js';
 import React from 'react'
 import StyleButton from "./StyleButton";
 
 var INLINE_STYLES = [
-    { label: 'Bold', style: 'BOLD' },
-    { label: 'Italic', style: 'ITALIC' },
-    { label: 'Underline', style: 'UNDERLINE' },
-    { label: 'Monospace', style: 'CODE' },
+    { label: 'B', style: 'BOLD' },
+    { label: 'i', style: 'ITALIC' },
+    { label: 'U', style: 'UNDERLINE' },
+    // { label: 'Monospace', style: 'CODE' },
 ];
 
 export default function InlineStyleControls(props){
-    const currentStyle = props.editorState.getCurrentInlineStyle();
+
+    const toggle = (inlineStyle) => {
+        const currEditor = props.editors.getCurrEditor()
+        if (currEditor)
+            props.editors.updateEditor(currEditor, RichUtils.toggleInlineStyle(props.editors.editors[currEditor], inlineStyle))
+    }
+
+    let currentStyle = new Set([])
+    const currEditorIndex = props.editors.getCurrEditor()
+    if (currEditorIndex){
+        currentStyle = props.editors.editors[currEditorIndex].getCurrentInlineStyle();
+    }
 
     return (
         <div className="RichEditor-controls">
@@ -18,7 +30,7 @@ export default function InlineStyleControls(props){
                     key={type.label}
                     active={currentStyle.has(type.style)}
                     label={type.label}
-                    onToggle={props.onToggle}
+                    onToggle={toggle}
                     style={type.style}
                 />
             )}
